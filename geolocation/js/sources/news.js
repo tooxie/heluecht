@@ -1,44 +1,78 @@
+"use strict";
 document.addEventListener('DOMContentLoaded',function() {
-    window.models.NewsDataSource = DataSource.extend({
+    window.models.push(DataSource.extend({
 
         defaults: function() {
             return {
                 'name': 'Local news',
                 'author': 'Alvaro Mouriño',
                 'email': 'alvaro@mourino.net',
-                'version': '0.1'
+                'version': '0.1',
+                'items': Array()
             };
         },
 
         populate: function(city, country) {
-            var signedURL;
+            // debug
+            console.log('populate');
             this.set({
                 'city': city,
                 'country': country
             });
-            signedURL = makeSignedRequest(Y_KEY, Y_SECRET, this.get_yql());
-            loadJSON(signedURL);
+            App.executeYQL(this.getYQL(), this, {'diagnostics': true, 'format': 'json'});
         },
 
-        get_rss: function() {
+        getRSS: function() {
             var city = encodeURIComponent(this.get('city') + ", " + this.get('country'));
-            return encodeURIComponent('http://news.search.yahoo.com/rss?ei=UTF-8&amp;p=' + city);
+            // debug
+            console.log('getRSS');
+            return 'http://news.search.yahoo.com/rss?ei=UTF-8&p=' + city;
         },
 
-        get_yql: function() {
+        getYQL: function() {
             var enccback = encodeURIComponent(this.get_callback());
-            return 'http://query.yahooapis.com/v1/public/yql?q=select%20*' +
-                   '%20from%20rss%20where%20url%3D%22' + this.get_rss(city, country) +
-                   '%22&diagnostics=true&format=json&callback=' + enccback;
+            // debug
+            console.log('getYQL');
+            return 'select * from rss where url="' + this.getRSS(city, country) + '"'
         },
 
-        callback: function(query, url) {
-            var item;
-            if(url == decodeURIComponent(this.get_rss())) {
-                for(i in query.item) {
-                    item = console.log(query.item[i]);
+        setItem: function(item) {
+            var items = this.get('items');
+            items.push(item);
+        },
+
+        callback: function(msg) {
+            var i, items, x;
+            // debug
+            console.log('callback!');
+            console.info(msg);
+            console.log(msg.query.diagnostics.url[1].content + ' == ' + this.getRSS());
+            if(msg.query.diagnostics.url[1].content == this.getRSS()) {
+                items = msg.query.results.item;
+                for(x = 0; x < items.length; x += 1) {
+                    this.setItem({
+                        'title': items[x].title,
+                        'link': items[x].link,
+                        'description': items[x].description
+                    });
                 }
+                // debug
+                console.log('equal');
+                console.info(this.get('items'));
+                return true;
             }
+            // debug
+            console.log('not equal');
+            return false;
         }
+
+    }));
+
+    window.collections.NewsCollection = Backbone.Collection.extend({
+
+        model: models['NewsDataSource'],
+
+        localStorage: new Store("news")
+
     });
 });
