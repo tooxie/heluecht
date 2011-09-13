@@ -1,17 +1,90 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" manifest="cache.manifest">
     <head>
         <title>Heluecht | Mozilla Dev Derby</title>
         <meta charset="utf-8">
-        <script type="text/javascript" src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
-        <script type="text/javascript" src="http://documentcloud.github.com/backbone/backbone-min.js"></script>
-        <script type="text/javascript" src="http://documentcloud.github.com/backbone/examples/backbone-localstorage.js"></script>
-        <script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/oauth.js"></script>
-        <script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/sha1.js"></script>
-        <script src="http://yui.yahooapis.com/3.4.0/build/yui/yui-min.js"></script>
-        <script type="text/javascript" src="js/base.js"></script>
-        <script type="text/javascript" src="js/ykey.js"></script>
-        <script type="text/javascript" src="js/sources/news.js"></script>
+
+        <script type="text/javascript" src="js/dojo/dojo.js"></script>
+        <script type="text/javascript" src="js/json2.js"></script>
+
+        <script type="text/javascript">
+            dojo.ready(function() {
+                function error(msg) {
+                    if(msg == undefined) {
+                        msg = 'Failed';
+                    }
+                    dojo.byId('status').innerHTML = msg;
+                }
+
+                function success(position) {
+                    var city, query;
+                    console.info(position);
+                    dojo.require('dojox.yql');
+                    // FIXME: Change this back.
+                    // city = position.address.city + ', ' + position.address.country
+                    city = 'Montevideo, Uruguay';
+                    query = "select * from google.igoogle.weather where weather='" + city + "'";
+                    // debug
+                    console.log(query);
+                    dojox.yql(query, {
+                        load: function(weatherData) {
+                            store('weather', weatherData.results.weather);
+                            console.log('stored weather!');
+                        }
+                    });
+
+                    rss = "http://news.search.yahoo.com/rss?ei=UTF-8&p=" + encodeURIComponent(city);
+                    query = 'select * from rss where url="' + rss + '"';
+                    dojox.yql(query, {
+                        load: function(newsData) {
+                            store('news', newsData.results);
+                            console.log('stored news!');
+                        }
+                    });
+                }
+
+                function store(key, value) {
+                    var orig_val = JSON.parse(localStorage.getItem(getNamespace()) || '{}');
+                    orig_val[key] = value;
+                    localStorage.setItem(getNamespace(), JSON.stringify(orig_val));
+                }
+
+                function checkAll() {
+                    if(!navigator.geolocation) {
+                        return false;
+                    }
+                    if(!localStorage) {
+                        return false;
+                    }
+                    return true;
+                }
+
+                function getNamespace() {
+                    return 'heluecht';
+                }
+
+                function offline() {
+                    console.log('offline');
+                    dojo.byId('status').innerHTML = 'You are offline.';
+                    console.info(localStorage[getNamespace()]);
+                }
+
+                // debug
+                console.info(localStorage.length + ' items in Storage.');
+
+                if(navigator.onLine) {
+                    console.log('online');
+                    if(!checkAll()) {
+                        alert('Upgrade browser.');
+                    } else {
+                        dojo.byId('status').innerHTML = 'Checking...';
+                        navigator.geolocation.getCurrentPosition(success, error);
+                    }
+                } else {
+                    offline();
+                }
+            });
+        </script>
     </head>
 
     <body>
@@ -20,13 +93,13 @@
                 Heluecht
             </h1>
             <p>
-                The HTML5 Guide to the Galaxy.
+                The HTML5 Guide.
             </p>
         </header>
 
         <div id="workspace"></div>
+
         <article>
-            <button id="findme">Find me!</button>
             <p>
                 Finding your location: <span id="status"><noscript>Javascript is disabled.</noscript></span>
             </p>
@@ -38,5 +111,7 @@
             <a href="https://github.com/tooxie/heluecht">View source</a> |
             <a href="https://developer.mozilla.org/en-US/demos/devderby">Mozilla Dev Derby</a>
         </footer>
+
+        <!-- :wq -->
     </body>
 </html>
