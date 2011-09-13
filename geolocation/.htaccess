@@ -1,4 +1,6 @@
 AddType text/cache-manifest .manifest
+ExpiresByType text/cache-manifest "access plus 0 seconds"
+
 # <FilesMatch *.manifest>
 #     ExpiresActive On
 #     ExpiresDefault "access"
