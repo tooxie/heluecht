@@ -4,85 +4,12 @@
         <title>Heluecht | Mozilla Dev Derby</title>
         <meta charset="utf-8">
 
+        <!-- lib -->
         <script type="text/javascript" src="js/dojo/dojo.js"></script>
         <script type="text/javascript" src="js/json2.js"></script>
 
-        <script type="text/javascript">
-            dojo.ready(function() {
-                function error(msg) {
-                    if(msg == undefined) {
-                        msg = 'Failed';
-                    }
-                    dojo.byId('status').innerHTML = msg;
-                }
-
-                function success(position) {
-                    var city, query;
-                    console.info(position);
-                    dojo.require('dojox.yql');
-                    city = position.address.city + ', ' + position.address.country
-                    query = "select * from google.igoogle.weather where weather='" + city + "'";
-                    // debug
-                    console.log(query);
-                    dojox.yql(query, {
-                        load: function(weatherData) {
-                            store('weather', weatherData.results.weather);
-                            console.log('stored weather!');
-                        }
-                    });
-
-                    rss = "http://news.search.yahoo.com/rss?ei=UTF-8&p=" + encodeURIComponent(city);
-                    query = 'select * from rss where url="' + rss + '"';
-                    dojox.yql(query, {
-                        load: function(newsData) {
-                            store('news', newsData.results);
-                            console.log('stored news!');
-                        }
-                    });
-                }
-
-                function store(key, value) {
-                    var orig_val = JSON.parse(localStorage.getItem(getNamespace()) || '{}');
-                    orig_val[key] = value;
-                    localStorage.setItem(getNamespace(), JSON.stringify(orig_val));
-                }
-
-                function checkAll() {
-                    if(!navigator.geolocation) {
-                        return false;
-                    }
-                    if(!localStorage) {
-                        return false;
-                    }
-                    return true;
-                }
-
-                function getNamespace() {
-                    return 'heluecht';
-                }
-
-                function offline() {
-                    console.log('offline');
-                    dojo.byId('status').innerHTML = 'You are offline.';
-                    console.info(localStorage[getNamespace()]);
-                }
-
-                // debug
-                console.info(localStorage.length + ' items in Storage.');
-
-                if(navigator.onLine) {
-                    console.log('online');
-                    if(!checkAll()) {
-                        alert('Upgrade browser.');
-                    } else {
-                        dojo.byId('status').innerHTML = 'Checking...';
-                        navigator.geolocation.getCurrentPosition(success, error);
-                    }
-                } else {
-                    offline();
-                }
-            });
-        </script>
+        <!-- usr -->
+        <script type="text/javascript" src="js/heluecht.js"></script>
     </head>
 
     <body>
