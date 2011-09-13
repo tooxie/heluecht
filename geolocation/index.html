@@ -20,9 +20,7 @@
                     var city, query;
                     console.info(position);
                     dojo.require('dojox.yql');
-                    // FIXME: Change this back.
-                    // city = position.address.city + ', ' + position.address.country
-                    city = 'Montevideo, Uruguay';
+                    city = position.address.city + ', ' + position.address.country
                     query = "select * from google.igoogle.weather where weather='" + city + "'";
                     // debug
                     console.log(query);
