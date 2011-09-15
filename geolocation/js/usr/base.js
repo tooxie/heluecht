@@ -1,20 +1,53 @@
 dojo.ready(function() {
-    // debug
-    console.info(localStorage.length + ' items in Storage.');
-
-    if(navigator.onLine) {
-        // debug
-        console.log('online');
-        if(!checkAll()) {
-            alert('Upgrade browser.');
-        } else {
-            // dojo.byId('status').innerHTML = 'Checking...';
-            navigator.geolocation.getCurrentPosition(success, error);
-        }
+    if(!checkAll()) {
+        alert('Upgrade browser.');
     } else {
-        offline();
+        if(navigator.onLine) {
+            online();
+        } else {
+            offline();
+        }
     }
 });
+
+function online() {
+    navigator.geolocation.getCurrentPosition(success, error);
+}
+
+function offline() {
+    render();
+}
+
+function render() {
+    // Put custom widgets here.
+    var news = sources.NewsView({online: navigator.onLine});
+    var weather = sources.WeatherView({online: navigator.onLine});
+    news.render();
+    dojox.mobile.parser.parse('news');
+}
+
+(function(){
+    // Create a new LINK element, get reference to the HEAD tag which we'll inject it into
+    var l = document.createElement("link"), h = document.getElementsByTagName("head")[0];
+    // Is this Android?
+    var isAndroid = navigator.userAgent.indexOf("Android") > -1;
+    // isAndroid = true;
+    // Add the appropriate stylesheet designations.
+    l.setAttribute("rel", "stylesheet");
+    themesURL = "http://ajax.googleapis.com/ajax/libs/dojo/1.6.0/dojox/mobile/themes/";
+    l.setAttribute("href", themesURL + (isAndroid ? "android/android.css" : "iphone/iphone.css"));
+    // Inject into header.
+    h.insertBefore(l, h.firstChild);
+
+    dojo.require("dojox.mobile.parser");
+    dojo.require("dojox.mobile");
+    // dojo.require("dojox.mobile.ScrollableView");
+    dojo.requireIf(!dojo.isWebKit, "dojox.mobile.compat");
+
+    // Load custom views here.
+    dojo.require("sources.NewsView");
+    dojo.require("sources.WeatherView");
+})();
 
 function error(GeoPositionError) {
     var error_codes = {},
@@ -30,21 +63,28 @@ function error(GeoPositionError) {
 }
 
 function success(position) {
-    document.getElementById('title').innerHTML = position.address.city + ', ' + position.address.country;
-    document.getElementById('menuList').style.display = 'block';
-    // debug
-    console.info(position);
-    store('position', {
-        address: {
-            city: position.address.city,
-            country: position.address.country
-        },
-        coords: {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude
+    var coords, query;
+    coords = position.coords.latitude + ', ' + position.coords.longitude;
+    query = 'select admin1, country from geo.places where text="' + coords + '" limit 1';
+    lib.yql(query, {
+        load: function(geoData) {
+            var city = geoData.results.place.admin1.content,
+                country = geoData.results.place.country.content;
+            store('position', {
+                address: {
+                    city: city,
+                    country: country
+                },
+                coords: {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                }
+            });
+            document.getElementById('title').innerHTML = city + ', ' + country;
+            document.getElementById('menuList').style.display = 'block';
+            render();
         }
     });
-    render();
 }
 
 function store(key, value) {
@@ -58,7 +98,8 @@ function store(key, value) {
         throw "StorageError: No value provided";
     }
 
-    console.info(value);
+    // debug
+    // console.info(value);
 
     orig_val = JSON.parse(localStorage.getItem(getNamespace()) || '{}');
     orig_val[key] = value;
@@ -89,13 +130,4 @@ function checkAll() {
 
 function getNamespace() {
     return 'heluecht';
-}
-
-function offline() {
-    // debug
-    console.log('offline');
-    dojo.byId('status').innerHTML = 'You are offline.';
-    // debug
-    console.info(localStorage[getNamespace()]);
-    render();
 }
