@@ -15,7 +15,8 @@ dojo.require("lib.yql");
 // Widget
 dojo.declare("sources.NewsView", [dojox.mobile.ScrollableView, lib._ViewMixin], {
     constructor: function(args) {
-        console.log('__init__()');
+        // debug
+        // console.log('__init__()');
         dojo.safeMixin(this, args);
         if(args.online) {
             this.populate();
@@ -32,8 +33,6 @@ dojo.declare("sources.NewsView", [dojox.mobile.ScrollableView, lib._ViewMixin], 
     populate: function() {
         var city, query, position, rss;
         position = retrieve('position');
-        console.log('position');
-        console.info(position);
         city = position.address.city + ', ' + position.address.country;
         rss = "http://news.search.yahoo.com/rss?ei=UTF-8&p=" + encodeURIComponent(city);
         query = 'select * from rss where url="' + rss + '"';
@@ -48,7 +47,8 @@ dojo.declare("sources.NewsView", [dojox.mobile.ScrollableView, lib._ViewMixin], 
         var news_container = document.getElementById("newsList"),
             news_list = retrieve('news'),
             x;
-        console.log('render()');
+        // debug
+        // console.log('render()');
         for(x = 0; x < news_list.length - 1; x += 1) {
             news_container.innerHTML += this.substitute(this.templateString, {
                 title: news_list[x]['title'],

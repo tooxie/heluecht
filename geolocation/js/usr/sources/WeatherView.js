@@ -26,16 +26,20 @@ dojo.declare("sources.WeatherView", [dojox.mobile.ScrollableView], {
     populate: function () {
         var city, query, position, rss;
         position = retrieve('position');
-        console.info(position);
+        // debug
+        // console.info(position);
         city = position.address.city + ', ' + position.address.country;
         query = "select * from google.igoogle.weather where weather='" + city + "';";
         // debug
-        console.log(query);
+        // console.log(query);
         lib.yql(query, {
             load: function(weatherData) {
+                // TODO: Verificar que se esté guardando.
                 store('weather', weatherData.results.xml_api_reply.weather);
             }
         });
+    },
+    render: function() {
     }
 });
 // :wq
