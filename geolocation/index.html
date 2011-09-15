@@ -1,42 +1,124 @@
 <!DOCTYPE html>
-<html lang="en" manifest="cache.manifest">
+<html lang="en">
+<!-- <html lang="en" manifest="cache.manifest"> -->
     <head>
-        <title>Heluecht | Mozilla Dev Derby</title>
+        <title>Catsei | Mozilla Dev Derby</title>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-touch-fullscreen" content="yes">
+        <meta names="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+        <!-- prevent cache -->
+        <meta http-equiv="cache-control" content="no-cache">
+        <meta http-equiv="pragma" content="no-cache">
+
+        <script type="text/javascript">
+            djConfig = {
+                isDebug: true,
+                baseUrl: "./",
+                parseOnLoad: false,
+                modulePaths: {
+                    "sources": "js/usr/sources",
+                    "lib": "js/lib"
+                }
+            };
+
+            function render() {
+                // Put custom widgets here.
+                var news = sources.NewsView({online: navigator.onLine});
+                var weather = sources.WeatherView({online: navigator.onLine});
+                news.render();
+                dojox.mobile.parser.parse();
+            }
+        </script>
 
         <!-- lib -->
-        <script type="text/javascript" src="js/dojo/dojo.js"></script>
-        <script type="text/javascript" src="js/json2.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/dojo/1.6.0/dojo/dojo.xd.js"></script>
+        <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+
+        <script type="text/javascript">
+            (function(){
+                // Create a new LINK element, get reference to the HEAD tag which we'll inject it into
+                var l = document.createElement("link"), h = document.getElementsByTagName("head")[0];
+                // Is this Android?
+                var isAndroid = navigator.userAgent.indexOf("Android") > -1;
+                // isAndroid = true;
+                // Add the appropriate stylesheet designations.
+                l.setAttribute("rel", "stylesheet");
+                themesURL = "http://ajax.googleapis.com/ajax/libs/dojo/1.6.0/dojox/mobile/themes/";
+                l.setAttribute("href", themesURL + (isAndroid ? "android/android.css" : "iphone/iphone.css"));
+                // Inject into header.
+                h.insertBefore(l, h.firstChild);
+
+                dojo.require("dojox.mobile.parser");
+                dojo.require("dojox.mobile");
+                // dojo.require("dojox.mobile.ScrollableView");
+                dojo.requireIf(!dojo.isWebKit, "dojox.mobile.compat");
+
+                // Load custom views here.
+                dojo.require("sources.NewsView");
+                dojo.require("sources.WeatherView");
+
+                // Use iOS images by default
+                // Fix my image paths for android
+                dojo.ready(function() {
+                    // If Android....
+                    if(isAndroid) {
+                        // Update image path on bottom tabbar
+                        dojo.forEach(document.getElementsByClassName("refreshButton"), function(btn) {
+                            dojo.attr(btn, "iconLoading", "images/androidLoading.gif");
+                        });
+                    }
+                });
+            })();
+        </script>
 
         <!-- usr -->
-        <script type="text/javascript" src="js/heluecht.js"></script>
+        <script type="text/javascript" src="js/usr/base.js"></script>
+        <!--
+        <script type="text/javascript" src="js/usr/news.js"></script>
+        <script type="text/javascript" src="js/usr/weather.js"></script>
+        -->
+        <!-- <link href="http://ajax.googleapis.com/ajax/libs/dojo/1.6.0/dojox/mobile/themes/android/android.css" rel="stylesheet"></link> -->
+        <!-- debug only: DELETE -->
+        <!-- <link href="http://ajax.googleapis.com/ajax/libs/dojo/1.6.0/dojox/mobile/themes/android/android-compat.css" rel="stylesheet"></link> -->
+
     </head>
 
     <body>
-        <header>
-            <h1>
-                Heluecht
+        <!-- menu view -->
+        <div id="menu" dojoType="dojox.mobile.View" selected="true">
+            <h1 dojoType="dojox.mobile.Heading" fixed="top">
+                Mozilla Guide
             </h1>
-            <p>
-                The HTML5 Guide.
-            </p>
-        </header>
+            <h2 dojoType="dojox.mobile.RoundRectCategory" id="title">
+                Loading...
+            </h2>
+            <ul dojoType="dojox.mobile.RoundRectList" id="menuList" style="display: none;">
+                <li dojoType="dojox.mobile.ListItem" moveTo="#news" transition="slide">
+                    News
+                </li>
+                <li dojoType="dojox.mobile.ListItem" moveTo="#weather" transition="slide">
+                    Weather
+                </li>
+            </ul>
+        </div>
 
-        <div id="workspace"></div>
+        <!-- news view -->
+        <div id="news" dojoType="dojox.mobile.View">
+            <h1 dojoType="dojox.mobile.Heading" back="Menu" moveTo="#menu">News</h1>
+            <ul dojoType="dojox.mobile.RoundRectList" id="newsList">
+            </ul>
+        </div>
 
-        <article>
-            <p>
-                Finding your location: <span id="status"><noscript>Javascript is disabled.</noscript></span>
-            </p>
-        </article>
-
-        <footer>
-            <a href="http://mourino.net">Alvaro Mouri&ntilde;o</a> |
-            <!-- <a href="mailto:alvaro@mourino.net">alvaro@mourino.net</a><br> -->
-            <a href="https://github.com/tooxie/heluecht">View source</a> |
-            <a href="https://developer.mozilla.org/en-US/demos/devderby">Mozilla Dev Derby</a>
-        </footer>
-
+        <!-- weather view -->
+        <div id="weather" dojoType="dojox.mobile.View">
+            <h1 dojoType="dojox.mobile.Heading" back="Menu" moveTo="#menu">Weather</h1>
+            Weather info.
+            <ul id="weatherList">
+            </ul>
+        </div>
         <!-- :wq -->
     </body>
 </html>
