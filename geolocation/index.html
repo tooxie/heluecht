@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
-<!-- <html lang="en" manifest="cache.manifest"> -->
+<html lang="en">  <!-- manifest="cache.manifest"> -->
     <head>
-        <title>Catsei | Mozilla Dev Derby</title>
+        <title>Catsei | Mozilla Dev Derby Sep 2011 | Geolocation API</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
 
@@ -28,6 +27,30 @@
 
         <!-- usr -->
         <script type="text/javascript" src="js/usr/base.js"></script>
+
+        <!-- Hacks -->
+        <link href="http://ajax.googleapis.com/ajax/libs/dojo/1.6.0/dojox/mobile/themes/iphone/iphone-compat.css" rel="stylesheet">
+        <!-- <link href="http://ajax.googleapis.com/ajax/libs/dojo/1.6.0/dojox/mobile/themes/android/android-compat.css" rel="stylesheet"> -->
+        <style type="text/css">
+            #newsList .mblListItem, #weather .mblRoundRect {
+                background-color:white;
+                color:black;
+                overflow:auto;
+            }
+            #weather .mblRoundRect img, #weather .mblListItemTextBox img {
+                float:left;
+                margin:1em;
+                border-radius:8px 8px 8px 8px;
+            }
+            #about .content {
+                background-color:white;
+                padding:0 10px;
+                overflow:auto;
+            }
+            #about .content h3 {
+                color:blue;
+            }
+        </style>
     </head>
 
     <body>
@@ -40,28 +63,84 @@
                 Loading...
             </h2>
             <ul dojoType="dojox.mobile.RoundRectList" id="menuList" style="display: none;">
+                <li dojoType="dojox.mobile.ListItem" moveTo="#map" transition="slide">
+                    Map
+                </li>
                 <li dojoType="dojox.mobile.ListItem" moveTo="#news" transition="slide">
                     News
                 </li>
                 <li dojoType="dojox.mobile.ListItem" moveTo="#weather" transition="slide">
                     Weather
                 </li>
+                <li dojoType="dojox.mobile.ListItem" moveTo="#about" transition="slide">
+                    About Catsei
+                </li>
             </ul>
+        </div>
+
+        <!-- map view -->
+        <div id="map" dojoType="dojox.mobile.View">
+            <h1 dojoType="dojox.mobile.Heading" back="Menu" moveTo="#menu">Map</h1>
+            <div id="gmap"></div>
         </div>
 
         <!-- news view -->
         <div id="news" dojoType="dojox.mobile.View">
             <h1 dojoType="dojox.mobile.Heading" back="Menu" moveTo="#menu">News</h1>
-            <ul dojoType="dojox.mobile.RoundRectList" id="newsList">
-            </ul>
+            <ul dojoType="dojox.mobile.RoundRectList" id="newsList"></ul>
         </div>
 
         <!-- weather view -->
         <div id="weather" dojoType="dojox.mobile.View">
             <h1 dojoType="dojox.mobile.Heading" back="Menu" moveTo="#menu">Weather</h1>
-            Weather info.
-            <ul id="weatherList">
+            <h2 dojoType="dojox.mobile.RoundRectCategory">
+                Current conditions
+            </h2>
+            <div dojoType="dojox.mobile.RoundRect" id="weatherCurrent">
+            </div>
+
+            <h2 dojoType="dojox.mobile.RoundRectCategory">
+                Forecast conditions
+            </h2>
+            <ul dojoType="dojox.mobile.RoundRectList" id="weatherForecast">
             </ul>
+        </div>
+
+        <!-- about view -->
+        <div id="about" dojoType="dojox.mobile.View">
+            <h1 dojoType="dojox.mobile.Heading" back="Menu" moveTo="#menu">About Catsei</h1>
+            <div class="content">
+                <h3>Hope you liked it!</h3>
+                <p>
+                    Catsei is just a demo developed by
+                    <a href="http://mourino.net">Alvaro Mouri&ntilde;o</a> for the
+                    <a href="https://developer.mozilla.org/en-US/demos/devderby">Mozilla Dev Derby</a>.
+                </p>
+                <p>
+                    It works with geolocation to detect the city you are at a given
+                    moment, it then downloads information you may find useful and saves
+                    it to read it later, even when lacking an Internet connection.
+                </p>
+                <p>
+                    Catsei is a full client-side web application, no server required. It's also
+                    <a href="https://secure.wikimedia.org/wikipedia/en/wiki/Free_software">Free Software</a>
+                    so you can download, modify and distribute it's
+                    <a href="https://github.com/tooxie/heluecht">source code</a>.
+                </p>
+                <p>
+                    Powered by <a href="http://diveintohtml5.org/">HTML5</a>'s Geolocation API, application cache, local storage and <a href="http://dojotoolkit.org/reference-guide/dojox/mobile.html">dojo</a>.
+                </p>
+                <p>
+                    Thanks to David Walsh for his great article
+                    <a href="http://davidwalsh.name/dojox-mobile">Creating Mobile Web Applications with dojox.mobile</a>.
+                    I have never worked with this technologies before, his post was very useful.
+                </p>
+                <p>
+                    Follow me on
+                    <a href="https://twitter.com/#!/tuxie_">twitter</a> or
+                    <a href="https://identi.ca/tuxie">identi.ca</a>.
+                </p>
+            </div>
         </div>
 
         <!-- :wq -->
