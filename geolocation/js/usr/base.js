@@ -45,7 +45,6 @@ function offline() {
 function render() {
     // Put custom widgets here.
     var coords = retrieve('position')['coords'];
-    console.info(coords);
     window.map = lib.map({
         latitude: coords.latitude,
         longitude: coords.longitude
