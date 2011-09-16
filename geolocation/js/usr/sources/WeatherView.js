@@ -70,6 +70,7 @@ dojo.declare("sources.WeatherView", [dojox.mobile.ScrollableView, lib._ViewMixin
     renderForecast: function() {
         var current,
             days,
+            dow,
             forecast = retrieve('weather')['forecast_conditions'],
             forecast_html = '',
             x;
@@ -84,8 +85,13 @@ dojo.declare("sources.WeatherView", [dojox.mobile.ScrollableView, lib._ViewMixin
         }
         for(x = 0; x < forecast.length; x += 1) {
             current = forecast[x];
+            if(x === 0) {
+                dow = 'Today';
+            } else {
+                dow = days[current.day_of_week.data];
+            }
             forecast_html += this.substitute(this.forecastTemplate, {
-                day_of_week: days[current.day_of_week.data],
+                day_of_week: dow,
                 icon: current.icon.data,
                 condition: current.condition.data,
                 high: current.high.data,
