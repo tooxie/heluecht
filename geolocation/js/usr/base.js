@@ -1,8 +1,11 @@
+requireModules();
+
 dojo.ready(function() {
     if(!checkAll()) {
         alert('Upgrade browser.');
     } else {
         if(navigator.onLine) {
+            isAndroid();
             online();
         } else {
             offline();
@@ -10,23 +13,55 @@ dojo.ready(function() {
     }
 });
 
+function checkAll() {
+    try {
+        if(!navigator.geolocation) {
+            return false;
+        }
+
+        if(!localStorage) {
+            return false;
+        }
+    } catch(e) {
+        return false;
+    }
+
+    return true;
+}
+
+function getNamespace() {
+    return 'catsei';
+}
+
 function online() {
     navigator.geolocation.getCurrentPosition(success, error);
 }
 
 function offline() {
+    // dojox.mobile.parser.parse('menu');
     render();
 }
 
 function render() {
     // Put custom widgets here.
-    var news = sources.NewsView({online: navigator.onLine});
-    var weather = sources.WeatherView({online: navigator.onLine});
-    news.render();
-    dojox.mobile.parser.parse('news');
+    var coords = retrieve('position')['coords'];
+    console.info(coords);
+    window.map = lib.map({
+        latitude: coords.latitude,
+        longitude: coords.longitude
+    });
+    window.news = sources.NewsView({
+        online: navigator.onLine,
+        container: document.getElementById('newsList')
+    });
+    window.weather = sources.WeatherView({
+        online: navigator.onLine,
+        currentContainer: document.getElementById('weatherCurrent'),
+        forecastContainer: document.getElementById('weatherForecast')
+    });
 }
 
-(function(){
+function isAndroid() {
     // Create a new LINK element, get reference to the HEAD tag which we'll inject it into
     var l = document.createElement("link"), h = document.getElementsByTagName("head")[0];
     // Is this Android?
@@ -38,16 +73,23 @@ function render() {
     l.setAttribute("href", themesURL + (isAndroid ? "android/android.css" : "iphone/iphone.css"));
     // Inject into header.
     h.insertBefore(l, h.firstChild);
+}
+
+function requireModules() {
 
     dojo.require("dojox.mobile.parser");
     dojo.require("dojox.mobile");
     // dojo.require("dojox.mobile.ScrollableView");
     dojo.requireIf(!dojo.isWebKit, "dojox.mobile.compat");
 
+    if(navigator.onLine) {
+        dojo.require('lib.map');
+    }
+
     // Load custom views here.
     dojo.require("sources.NewsView");
     dojo.require("sources.WeatherView");
-})();
+}
 
 function error(GeoPositionError) {
     var error_codes = {},
@@ -98,9 +140,6 @@ function store(key, value) {
         throw "StorageError: No value provided";
     }
 
-    // debug
-    // console.info(value);
-
     orig_val = JSON.parse(localStorage.getItem(getNamespace()) || '{}');
     orig_val[key] = value;
     localStorage.setItem(getNamespace(), JSON.stringify(orig_val));
@@ -110,24 +149,4 @@ function retrieve(key) {
     // TODO: This parses the JSON object everytime an item is requested. This
     // TODO: can/should be cached.
     return JSON.parse(localStorage.getItem(getNamespace()))[key];
-}
-
-function checkAll() {
-    try {
-        if(!navigator.geolocation) {
-            return false;
-        }
-
-        if(!localStorage) {
-            return false;
-        }
-    } catch(e) {
-        return false;
-    }
-
-    return true;
-}
-
-function getNamespace() {
-    return 'heluecht';
 }

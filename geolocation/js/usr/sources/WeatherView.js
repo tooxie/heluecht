@@ -2,44 +2,97 @@
 dojo.provide("sources.WeatherView");
 
 // Dependencies here
+dojo.require("lib._ViewMixin");
 dojo.require("dojox.mobile.ScrollableView");
 dojo.require("lib.yql");
-// dojo.require("dojo.DeferredList");
-// dojo.require("dojo.io.script");
-
-// Require localization for time
-// dojo.require("dojo.i18n");
-// dojo.requireLocalization("dojo.cldr", "gregorian", "", "");
 
 // Widget
-dojo.declare("sources.WeatherView", [dojox.mobile.ScrollableView], {
+dojo.declare("sources.WeatherView", [dojox.mobile.ScrollableView, lib._ViewMixin], {
+    currentTemplate: '<img src="http://google.com${icon}" alt="${condition}">' +
+    '<div>${condition}</div>' +
+    '<div>${humidity}</div>' +
+    '<div>${temp_c}&deg;C / ${temp_f}&deg;F</div>' +
+    '<div>${wind_condition}</div>' +
+    '<div style="clear:both">Last update: ${last_update}</div>',
+    forecastTemplate:'<li class="mblVariableHeight" dojoType="dojox.mobile.ListItem">' +
+    '<h3>${day_of_week}</h3>' +
+    '<img src="http://google.com${icon}" alt="${condition}">' +
+    '<p style="font-weight:normal;">${condition}</p>' +
+    '<p style="font-weight:normal;">High: ${high}&deg;F / Low: ${low}&deg;F</p>' +
+    '</li>',
+
     constructor: function(args) {
+        dojo.safeMixin(this, args);
         if(args.online) {
             this.populate();
+        } else {
+            this.currentContainer.innerHTML = this.renderCurrent();
+            dojox.mobile.parser.parse(this.currentContainer);
+            this.forecastContainer.innerHTML = this.renderForecast();
+            dojox.mobile.parser.parse(this.forecastContainer);
         }
-        dojo.safeMixin(this, args);
     },
-    title: 'No title',
-    pubDate: '',
-    link: '',
-    description: '',
+
     populate: function () {
         var city, query, position, rss;
         position = retrieve('position');
-        // debug
-        // console.info(position);
         city = position.address.city + ', ' + position.address.country;
         query = "select * from google.igoogle.weather where weather='" + city + "';";
-        // debug
-        // console.log(query);
         lib.yql(query, {
             load: function(weatherData) {
-                // TODO: Verificar que se esté guardando.
                 store('weather', weatherData.results.xml_api_reply.weather);
+                // Ugly hack =(
+                weather.currentContainer.innerHTML = weather.renderCurrent();
+                dojox.mobile.parser.parse(weather.currentContainer);
+                weather.forecastContainer.innerHTML = weather.renderForecast();
+                dojox.mobile.parser.parse(weather.forecastContainer);
             }
         });
     },
-    render: function() {
+
+    renderCurrent: function() {
+        var current,
+            information,
+            weatherData = retrieve('weather');
+        current = weatherData['current_conditions'];
+        information = weatherData['forecast_information'];
+        return this.substitute(this.currentTemplate, {
+            condition: current.condition.data,
+            humidity: current.humidity.data,
+            icon: current.icon.data,
+            temp_c: current.temp_c.data,
+            temp_f: current.temp_f.data,
+            wind_condition: current.wind_condition.data,
+            last_update: information.current_date_time.data
+        });
+    },
+
+    renderForecast: function() {
+        var current,
+            days,
+            forecast = retrieve('weather')['forecast_conditions'],
+            forecast_html = '',
+            x;
+        days = {
+            Mon: 'Monday',
+            Tue: 'Tuesday',
+            Wed: 'Wednsday',
+            Thu: 'Thursday',
+            Fri: 'Friday',
+            Sat: 'Saturday',
+            Sun: 'Sunday'
+        }
+        for(x = 0; x < forecast.length; x += 1) {
+            current = forecast[x];
+            forecast_html += this.substitute(this.forecastTemplate, {
+                day_of_week: days[current.day_of_week.data],
+                icon: current.icon.data,
+                condition: current.condition.data,
+                high: current.high.data,
+                low: current.low.data
+            });
+        }
+        return forecast_html;
     }
 });
 // :wq
