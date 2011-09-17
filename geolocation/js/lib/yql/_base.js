@@ -1,3 +1,4 @@
+"use strict";
 dojo.provide("lib.yql._base");
 dojo.require("dojo.io.script");
 /*
