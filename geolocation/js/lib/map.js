@@ -1,3 +1,4 @@
+"use strict";
 // Declare Dojo package name
 dojo.provide("lib.map");
 
@@ -13,8 +14,9 @@ dojo.declare("lib.map", null, {
     },
 
     loadAPI: function() {
-        this.id = dijit.getUniqueId('map');
         var script = document.getElementById('gmapsapi');
+
+        this.id = dijit.getUniqueId('map');
         if(!script){
             // create the script to load the google maps api
             script = document.createElement("script");
@@ -29,12 +31,16 @@ dojo.declare("lib.map", null, {
     },
 
     googleCallback: function(data){
-        var latlng = new google.maps.LatLng(this.latitude, this.longitude);
-        var myOptions = {
+        var latlng = new google.maps.LatLng(this.latitude, this.longitude),
+            map,
+            myOptions;
+
+        myOptions= {
             zoom: 14,
             center: latlng,
+            draggable: false,
             mapTypeId: google.maps.MapTypeId.ROADMAP
         };
-        var map = new google.maps.Map(document.getElementById("gmap"), myOptions);
+        map = new google.maps.Map(document.getElementById("gmap"), myOptions);
     }
 });
