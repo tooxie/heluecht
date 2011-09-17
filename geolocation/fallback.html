@@ -1,32 +1,52 @@
 <!DOCTYPE html>
 <html lang="en" manifest="cache.manifest">
     <head>
-        <title>Heluecht | Mozilla Dev Derby</title>
+        <title>Catsei | Mozilla Dev Derby Sep 2011 | Geolocation API</title>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="apple-touch-icon" href="img/app-icon.png">
+
+        <script type="text/javascript">
+            djConfig = {
+                isDebug: true,
+                baseUrl: "./",
+                parseOnLoad: true,
+            };
+        </script>
+
+        <!-- lib -->
+        <script src="http://ajax.googleapis.com/ajax/libs/dojo/1.6.0/dojo/dojo.xd.js"></script>
+
+        <script type="text/javascript">
+            dojo.require("dojox.mobile.parser");
+            dojo.require("dojox.mobile");
+            dojo.requireIf(!dojo.isWebKit, "dojox.mobile.compat");
+
+            dojo.ready(function() {
+                var l = document.createElement("link"), h = document.getElementsByTagName("head")[0];
+                var isAndroid = navigator.userAgent.indexOf("Android") > -1;
+                l.setAttribute("rel", "stylesheet");
+                themesURL = "http://ajax.googleapis.com/ajax/libs/dojo/1.6.0/dojox/mobile/themes/";
+                l.setAttribute("href", themesURL + (isAndroid ? "android/android.css" : "iphone/iphone.css"));
+                h.insertBefore(l, h.firstChild);
+            });
+        </script>
     </head>
 
     <body>
-        <header>
-            <h1>
-                Heluecht
+        <!-- menu view -->
+        <div id="offline" dojoType="dojox.mobile.View" selected="true">
+            <h1 dojoType="dojox.mobile.Heading" fixed="top">
+                Catsei Guide
             </h1>
-            <p>
-                The HTML5 Guide.
-            </p>
-        </header>
-
-        <article>
-            <p>
-                This resource is not available in offline mode.
-            </p>
-        </article>
-
-        <footer>
-            <a href="http://mourino.net">Alvaro Mouri&ntilde;o</a> |
-            <!-- <a href="mailto:alvaro@mourino.net">alvaro@mourino.net</a><br> -->
-            <a href="https://github.com/tooxie/heluecht">View source</a> |
-            <a href="https://developer.mozilla.org/en-US/demos/devderby">Mozilla Dev Derby</a>
-        </footer>
+            <h2 dojoType="dojox.mobile.RoundRectCategory">
+                Offline
+            </h2>
+            <div dojoType="dojox.mobile.RoundRect">
+                This is not available in offline mode.
+            </div>
+        </div>
 
         <!-- :wq -->
     </body>
