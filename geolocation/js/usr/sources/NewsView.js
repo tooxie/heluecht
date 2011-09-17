@@ -1,3 +1,4 @@
+"use strict";
 // News data source
 dojo.provide("sources.NewsView");
 
@@ -22,10 +23,19 @@ dojo.declare("sources.NewsView", [dojox.mobile.ScrollableView, lib._ViewMixin], 
     '</li>',
 
     constructor: function(args) {
+        var att;
+
         dojo.safeMixin(this, args);
-        if(args.online) {
+        if(args.update) {
+            console.log('News updating');
             this.populate();
         } else {
+            console.log('News not updating');
+            if(args.data) {
+                for(att in args.data) {
+                    this[att] = args.data[att];
+                }
+            }
             this.container.innerHTML = this.render();
             dojox.mobile.parser.parse(this.container);
         }
@@ -33,6 +43,7 @@ dojo.declare("sources.NewsView", [dojox.mobile.ScrollableView, lib._ViewMixin], 
 
     populate: function() {
         var city, query, position, rss;
+
         position = retrieve('position');
         city = position.address.city + ', ' + position.address.country;
         rss = "http://news.search.yahoo.com/rss?ei=UTF-8&p=" + encodeURIComponent(city);
@@ -51,6 +62,7 @@ dojo.declare("sources.NewsView", [dojox.mobile.ScrollableView, lib._ViewMixin], 
         var news_html = '',
             news_list = retrieve('news'),
             x;
+
         for(x = 0; x < news_list.length - 1; x += 1) {
             news_html += this.substitute(this.templateString, {
                 title: news_list[x]['title'],

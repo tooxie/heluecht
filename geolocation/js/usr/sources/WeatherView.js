@@ -1,3 +1,4 @@
+"use strict";
 // Weather data source
 dojo.provide("sources.WeatherView");
 
@@ -22,10 +23,19 @@ dojo.declare("sources.WeatherView", [dojox.mobile.ScrollableView, lib._ViewMixin
     '</li>',
 
     constructor: function(args) {
+        var att;
+
         dojo.safeMixin(this, args);
-        if(args.online) {
+        if(args.update) {
+            console.log('Weather updating');
             this.populate();
         } else {
+            console.log('Weather not updating');
+            if(args.data) {
+                for(att in args.data) {
+                    this[att] = args.data[att];
+                }
+            }
             this.currentContainer.innerHTML = this.renderCurrent();
             dojox.mobile.parser.parse(this.currentContainer);
             this.forecastContainer.innerHTML = this.renderForecast();
@@ -35,6 +45,7 @@ dojo.declare("sources.WeatherView", [dojox.mobile.ScrollableView, lib._ViewMixin
 
     populate: function () {
         var city, query, position, rss;
+
         position = retrieve('position');
         city = position.address.city + ', ' + position.address.country;
         query = "select * from google.igoogle.weather where weather='" + city + "';";
@@ -54,6 +65,7 @@ dojo.declare("sources.WeatherView", [dojox.mobile.ScrollableView, lib._ViewMixin
         var current,
             information,
             weatherData = retrieve('weather');
+
         current = weatherData['current_conditions'];
         information = weatherData['forecast_information'];
         return this.substitute(this.currentTemplate, {
@@ -74,6 +86,7 @@ dojo.declare("sources.WeatherView", [dojox.mobile.ScrollableView, lib._ViewMixin
             forecast = retrieve('weather')['forecast_conditions'],
             forecast_html = '',
             x;
+
         days = {
             Mon: 'Monday',
             Tue: 'Tuesday',
