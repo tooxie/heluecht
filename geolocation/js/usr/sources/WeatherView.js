@@ -66,6 +66,9 @@ dojo.declare("sources.WeatherView", [dojox.mobile.ScrollableView, lib._ViewMixin
             information,
             weatherData = retrieve('weather');
 
+        if(!weatherData) {
+            return '';
+        }
         current = weatherData['current_conditions'];
         information = weatherData['forecast_information'];
         return this.substitute(this.currentTemplate, {
@@ -83,10 +86,15 @@ dojo.declare("sources.WeatherView", [dojox.mobile.ScrollableView, lib._ViewMixin
         var current,
             days,
             dow,
-            forecast = retrieve('weather')['forecast_conditions'],
+            forecast = retrieve('weather'),
             forecast_html = '',
             x;
 
+        if(!forecast) {
+            return '';
+        } else {
+            forecast = forecast['forecast_conditions'];
+        }
         days = {
             Mon: 'Monday',
             Tue: 'Tuesday',

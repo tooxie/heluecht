@@ -59,19 +59,22 @@ dojo.declare("sources.NewsView", [dojox.mobile.ScrollableView, lib._ViewMixin], 
     },
 
     render: function() {
-        var news_html = '',
-            news_list = retrieve('news'),
+        var newsHTML = '',
+            newsList = retrieve('news'),
             x;
 
-        for(x = 0; x < news_list.length - 1; x += 1) {
-            news_html += this.substitute(this.templateString, {
-                title: news_list[x]['title'],
-                link: news_list[x]['link'],
-                pubDate: news_list[x]['pubDate'],
-                description: news_list[x]['description']
+        if(!newsList) {
+            return '';
+        }
+        for(x = 0; x < newsList.length - 1; x += 1) {
+            newsHTML += this.substitute(this.templateString, {
+                title: newsList[x]['title'],
+                link: newsList[x]['link'],
+                pubDate: newsList[x]['pubDate'],
+                description: newsList[x]['description']
             });
         }
-        return news_html;
+        return newsHTML;
     }
 });
 // :wq
