@@ -27,10 +27,10 @@ dojo.declare("sources.NewsView", [dojox.mobile.ScrollableView, lib._ViewMixin], 
 
         dojo.safeMixin(this, args);
         if(args.update) {
-            console.log('News updating');
+            // console.log('News updating');
             this.populate();
         } else {
-            console.log('News not updating');
+            // console.log('News not updating');
             if(args.data) {
                 for(att in args.data) {
                     this[att] = args.data[att];
