@@ -35,7 +35,7 @@ dojo.declare("lib.map", null, {
             map,
             myOptions;
 
-        myOptions= {
+        myOptions = {
             zoom: 14,
             center: latlng,
             draggable: false,
