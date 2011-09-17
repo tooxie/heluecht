@@ -1,11 +1,1 @@
 AddType text/cache-manifest .manifest
-ExpiresByType text/cache-manifest "access plus 0 seconds"
-
-# DEBUG
-ExpiresDefault "access plus 0 seconds"
-
-# <FilesMatch *.manifest>
-#     ExpiresActive On
-#     ExpiresDefault "access"
-#     Deny from all
-# </Files>
