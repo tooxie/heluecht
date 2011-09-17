@@ -93,6 +93,9 @@ function online(changedCity) {
             renderModules(true);
         } else {
             console.log('same city');
+            // TODO: ¿Qué pasa cuando se mantiene la ciudad pero no existe la
+            // TODO: info que necesita el módulo? En ese caso el módulo asume
+            // TODO: que existe, no la pide y da error al renderizar. Verificar.
             renderModules(false);
         }
     }
@@ -253,7 +256,7 @@ function geoError(GeoPositionError) {
     error_codes[GeoPositionError.POSITION_UNAVAILABLE] = 'Position unavailable';
     error_codes[GeoPositionError.TIMEOUT] = 'Timeout';
 
-    setTitle(error_codes[GeoPositionError.code], error=true);
+    setTitle(error_codes[GeoPositionError.code], true);
 }
 
 
