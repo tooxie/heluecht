@@ -1,5 +1,5 @@
 "use strict";
-dojo.provide("lib.yql._base");
+dojo.provide("lib.yql.base");
 dojo.require("dojo.io.script");
 /*
  * Begin Yahoo Web Services Attribution Snippet
