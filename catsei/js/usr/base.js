@@ -1,5 +1,4 @@
 "use strict";
-// console.info(localStorage);
 requireModules();
 
 dojo.ready(function() {
@@ -8,10 +7,8 @@ dojo.ready(function() {
     } else {
         loadPlatformTheme();
         if(navigator.onLine) {
-            // console.log('navigator online');
             online();
         } else {
-            // console.log('navigator offline');
             offline();
         }
         setupRefresh();
@@ -99,13 +96,8 @@ function online(changedCity) {
         navigator.geolocation.getCurrentPosition(getAddress, geoError);
     } else {
         if(changedCity === true) {
-            // console.log('city changed');
             renderModules(true);
         } else {
-            // console.log('same city');
-            // TODO: ¿Qué pasa cuando se mantiene la ciudad pero no existe la
-            // TODO: info que necesita el módulo? En ese caso el módulo asume
-            // TODO: que existe, no la pide y da error al renderizar. Verificar.
             renderModules(false);
         }
     }
@@ -117,7 +109,6 @@ function offline() {
 
     document.getElementById('refresh').style['display'] = 'none';
     if(position == undefined) {
-        // console.error('ERROR');
         setTitle('ERROR', error=true);
         return;
     }
@@ -130,17 +121,6 @@ function offline() {
 
 // --- events --- //
 
-function cacheUpdateReady() {
-    // console.log('application cache updated');
-}
-
-function setupCache() {
-    window.applicationCache.addEventListener('updateready', cacheUpdateReady());
-    if(window.applicationCache.status === window.applicationCache.UPDATEREADY) {
-        cacheUpdateReady();
-    }
-}
-
 function setupRefresh() {
     var refresh = document.getElementById('refresh');
 
@@ -151,7 +131,6 @@ function setupRefresh() {
         refresh.style['display'] = 'block';
     })
     refresh.addEventListener("click", function(e) {
-        // console.log('refreshing...');
         setTitle('Loading...');
         wipeStorage();
         online();
@@ -166,7 +145,6 @@ function getNamespace() {
 }
 
 function displayMenu(title) {
-    // console.log('displaying title and menu');
     setTitle(title);
     document.getElementById('menuList').style.display = 'block';
 }
@@ -185,17 +163,9 @@ function setTitle(msg, error) {
 function renderModules(update) {
     var coords = retrieve('position')['coords'];
 
-    // console.log('rendering modules');
     if(update === undefined) {
         update = navigator.onLine;
     }
-    /*
-    if(update) {
-        console.log('modules update content');
-    } else {
-        console.log('modules don\'t update');
-    }
-    */
     document.getElementById('menumap').addEventListener('click', function() {
         if(!window.map && lib.map) {
             window.map = lib.map({
@@ -214,7 +184,6 @@ function renderModules(update) {
 function getAddress(position) {
     var coords, query;
 
-    // console.log('guessing city...');
     coords = position.coords.latitude + ', ' + position.coords.longitude;
     query = 'select admin1, country from geo.places where text="' + coords + '" limit 1';
     lib.yql(query, {
@@ -290,7 +259,6 @@ function store(key, value) {
     orig_val = dojo.fromJson(localStorage.getItem(getNamespace()) || '{}');
     orig_val[key] = value;
     localStorage.setItem(getNamespace(), dojo.toJson(orig_val));
-    // console.log('stored ' + key);
 }
 
 function retrieve(key) {
@@ -308,6 +276,5 @@ function retrieve(key) {
 }
 
 function wipeStorage() {
-    // console.log('destroying storage contents');
     delete localStorage[getNamespace()];
 }
