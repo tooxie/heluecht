@@ -108,7 +108,7 @@ function offline() {
 
     document.getElementById('refresh').style['display'] = 'none';
     if(position == undefined) {
-        setTitle('ERROR', error=true);
+        setTitle('ERROR', true);
         return;
     }
 
