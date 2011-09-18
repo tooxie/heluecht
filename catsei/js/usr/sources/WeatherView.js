@@ -27,10 +27,8 @@ dojo.declare("sources.WeatherView", [dojox.mobile.ScrollableView, lib.ViewMixin]
 
         dojo.safeMixin(this, args);
         if(args.update) {
-            // console.log('Weather updating');
             this.populate();
         } else {
-            // console.log('Weather not updating');
             if(args.data) {
                 for(att in args.data) {
                     this[att] = args.data[att];

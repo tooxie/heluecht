@@ -18,7 +18,6 @@ dojo.declare("lib.map", null, {
 
         this.id = dijit.getUniqueId('map');
         if(!script){
-            // create the script to load the google maps api
             script = document.createElement("script");
             script.type = "text/javascript";
             script.id = "api";
