@@ -1,9 +1,9 @@
 "use strict";
 // Provide the class
-dojo.provide("lib._ViewMixin");
+dojo.provide("lib.ViewMixin");
 
 // Declare the class
-dojo.declare("lib._ViewMixin", null, {
+dojo.declare("lib.ViewMixin", null, {
     // Pushes data into a template - primitive
     substitute: function(template, obj) {
         return template.replace(/\$\{([^\s\:\}]+)(?:\:([^\s\:\}]+))?\}/g, function(match, key){

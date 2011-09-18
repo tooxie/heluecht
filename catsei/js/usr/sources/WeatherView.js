@@ -3,12 +3,12 @@
 dojo.provide("sources.WeatherView");
 
 // Dependencies here
-dojo.require("lib._ViewMixin");
+dojo.require("lib.ViewMixin");
 dojo.require("dojox.mobile.ScrollableView");
 dojo.require("lib.yql");
 
 // Widget
-dojo.declare("sources.WeatherView", [dojox.mobile.ScrollableView, lib._ViewMixin], {
+dojo.declare("sources.WeatherView", [dojox.mobile.ScrollableView, lib.ViewMixin], {
     currentTemplate: '<img src="http://google.com${icon}" alt="${condition}">' +
     '<div>${condition}</div>' +
     '<div>${humidity}</div>' +
