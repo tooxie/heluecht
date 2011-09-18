@@ -75,11 +75,21 @@ function checkAll() {
 function loadPlatformTheme() {
     var h = document.getElementsByTagName("head")[0],
         isAndroid = navigator.userAgent.indexOf("Android") > -1,
+        isiPhone = navigator.userAgent.indexOf("iPhone") > -1,
+        isBlackBerry = navigator.userAgent.indexOf("BlackBerry") > -1,
         l = document.createElement("link"),
         themesURL;
 
-    l.setAttribute("rel", "stylesheet");
     themesURL = "http://ajax.googleapis.com/ajax/libs/dojo/1.6.0/dojox/mobile/themes/";
+
+    if(!isAndroid && !isiPhone && !isBlackBerry) {
+        l.setAttribute("rel", "stylesheet");
+        l.setAttribute("href", themesURL + (isAndroid ? "android/android-compat.css" : "iphone/iphone-compat.css"));
+        h.insertBefore(l, h.firstChild);
+        l = document.createElement("link");
+    }
+
+    l.setAttribute("rel", "stylesheet");
     l.setAttribute("href", themesURL + (isAndroid ? "android/android.css" : "iphone/iphone.css"));
     h.insertBefore(l, h.firstChild);
 }
