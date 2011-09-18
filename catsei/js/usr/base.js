@@ -108,7 +108,7 @@ function offline() {
 
     document.getElementById('refresh').style['display'] = 'none';
     if(position == undefined) {
-        setTitle('ERROR', true);
+        setTitle("Error: There's no information in storage. Please go online and synchronize.", true);
         return;
     }
 
