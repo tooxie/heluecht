@@ -219,13 +219,6 @@ function updateCity(position) {
             changed = true;
         }
     }
-    /*
-    if(changed) {
-        console.log('city changed, we are now in ' + position.address.city);
-    } else {
-        console.log('we are still in ' + position.address.city);
-    }
-    */
     displayMenu(position.address.city + ', ' + position.address.country);
     store('position', position);
     online(changed);
