@@ -12,7 +12,6 @@ dojo.ready(function() {
             offline();
         }
         setupRefresh();
-        setupCache();
     }
 });
 
