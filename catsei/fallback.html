@@ -24,10 +24,23 @@
             dojo.requireIf(!dojo.isWebKit, "dojox.mobile.compat");
 
             dojo.ready(function() {
-                var l = document.createElement("link"), h = document.getElementsByTagName("head")[0];
-                var isAndroid = navigator.userAgent.indexOf("Android") > -1;
-                l.setAttribute("rel", "stylesheet");
+                var h = document.getElementsByTagName("head")[0],
+                    isAndroid = navigator.userAgent.indexOf("Android") > -1,
+                    isiPhone = navigator.userAgent.indexOf("iPhone") > -1,
+                    isBlackBerry = navigator.userAgent.indexOf("BlackBerry") > -1,
+                    l = document.createElement("link"),
+                    themesURL;
+
                 themesURL = "http://ajax.googleapis.com/ajax/libs/dojo/1.6.0/dojox/mobile/themes/";
+
+                if(!isAndroid && !isiPhone && !isBlackBerry) {
+                    l.setAttribute("rel", "stylesheet");
+                    l.setAttribute("href", themesURL + (isAndroid ? "android/android-compat.css" : "iphone/iphone-compat.css"));
+                    h.insertBefore(l, h.firstChild);
+                    l = document.createElement("link");
+                }
+
+                l.setAttribute("rel", "stylesheet");
                 l.setAttribute("href", themesURL + (isAndroid ? "android/android.css" : "iphone/iphone.css"));
                 h.insertBefore(l, h.firstChild);
             });
