@@ -1,0 +1,12 @@
+CACHE MANIFEST
+
+CACHE:
+*.js
+*.jpg
+*.png
+*.gif
+*.css
+index.html
+
+FALLBACK:
+/ fallback.html

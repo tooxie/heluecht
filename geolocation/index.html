@@ -1,42 +1,189 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" manifest="cache.manifest">
     <head>
-        <title>Heluecht | Mozilla Dev Derby</title>
+        <title>Catsei | Mozilla Dev Derby Sep 2011 | Geolocation API</title>
         <meta charset="utf-8">
-        <script type="text/javascript" src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
-        <script type="text/javascript" src="http://documentcloud.github.com/backbone/backbone-min.js"></script>
-        <script type="text/javascript" src="http://documentcloud.github.com/backbone/examples/backbone-localstorage.js"></script>
-        <script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/oauth.js"></script>
-        <script type="text/javascript" src="http://oauth.googlecode.com/svn/code/javascript/sha1.js"></script>
-        <script src="http://yui.yahooapis.com/3.4.0/build/yui/yui-min.js"></script>
-        <script type="text/javascript" src="js/base.js"></script>
-        <script type="text/javascript" src="js/ykey.js"></script>
-        <script type="text/javascript" src="js/sources/news.js"></script>
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="apple-touch-icon" href="img/app-icon.png">
+
+        <script type="text/javascript">
+            djConfig = {
+                isDebug: true,
+                baseUrl: "./",
+                parseOnLoad: true,
+                modulePaths: {
+                    "sources": "js/usr/sources",
+                    "lib": "js/lib"
+                }
+            };
+        </script>
+
+        <!-- lib -->
+        <script src="http://ajax.googleapis.com/ajax/libs/dojo/1.6.0/dojo/dojo.xd.js"></script>
+
+        <!-- usr -->
+        <script type="text/javascript" src="js/usr/base.js"></script>
+
+        <style type="text/css">
+            .error {
+                color:red;
+            }
+            #newsList .mblListItem, #weather .mblRoundRect {
+                background-color:white;
+                color:black;
+                overflow:auto;
+            }
+            #weatherView .mblRoundRect img, #weatherView .mblListItemTextBox img {
+                border-radius:8px 8px 8px 8px;
+                float:left;
+                margin:1em;
+            }
+            #aboutView .content {
+                background-color:white;
+                overflow:auto;
+                padding:0 10px;
+                color:black;
+            }
+            #aboutView .content h3 {
+                color:blue;
+            }
+            #gmap {
+                background-color:white;
+                border-radius:8px 8px 8px 8px;
+                border:1px solid #ADAAAD;
+                margin:7px auto 16px;
+            }
+            .achtung {
+                text-align:center;
+            }
+            .achtung::before {
+                content:url("img/achtung.gif");
+            }
+            h1 .mblArrowButton {
+                position:absolute;
+            }
+            h1 .mblHeading {
+                height:42px;
+                line-height:42px;
+            }
+        </style>
     </head>
 
     <body>
-        <header>
-            <h1>
-                Heluecht
+        <!-- menu view -->
+        <div id="menuView" dojoType="dojox.mobile.ScrollableView" selected="true">
+            <h1 dojoType="dojox.mobile.Heading" fixed="top">
+                <!-- Disappears when going offline. Try it! =) -->
+                <div dojoType="dojox.mobile.ToolBarButton" class="mblDomButton" id="refresh" style="float:right;" icon="img/refresh.png"></div>
+                Catsei Guide
             </h1>
-            <p>
-                The HTML5 Guide to the Galaxy.
-            </p>
-        </header>
+            <h2 dojoType="dojox.mobile.RoundRectCategory" id="title">
+                Loading...
+            </h2>
+            <ul dojoType="dojox.mobile.RoundRectList" id="menuList" style="display: none;">
+                <li dojoType="dojox.mobile.ListItem" moveTo="#mapView" transition="slide" id="menumap">
+                    Map
+                </li>
+                <li dojoType="dojox.mobile.ListItem" moveTo="#newsView" transition="slide">
+                    News
+                </li>
+                <li dojoType="dojox.mobile.ListItem" moveTo="#weatherView" transition="slide">
+                    Weather
+                </li>
+                <li dojoType="dojox.mobile.ListItem" moveTo="#aboutView" transition="slide">
+                    About Catsei
+                </li>
+            </ul>
+        </div>
 
-        <div id="workspace"></div>
-        <article>
-            <button id="findme">Find me!</button>
-            <p>
-                Finding your location: <span id="status"><noscript>Javascript is disabled.</noscript></span>
+        <!-- map view -->
+        <div id="mapView" dojoType="dojox.mobile.ScrollableView">
+            <h1 dojoType="dojox.mobile.Heading" fixed="top" back="Menu" moveTo="menuView">
+                Map
+            </h1>
+            <p class="achtung">
+                This content may not be available offline.
             </p>
-        </article>
+            <div id="gmap" style="height:400px;width:90%;"></div>
+        </div>
 
-        <footer>
-            <a href="http://mourino.net">Alvaro Mouri&ntilde;o</a> |
-            <!-- <a href="mailto:alvaro@mourino.net">alvaro@mourino.net</a><br> -->
-            <a href="https://github.com/tooxie/heluecht">View source</a> |
-            <a href="https://developer.mozilla.org/en-US/demos/devderby">Mozilla Dev Derby</a>
-        </footer>
+        <!-- news view -->
+        <div id="newsView" dojoType="dojox.mobile.ScrollableView">
+            <h1 dojoType="dojox.mobile.Heading" fixed="top" back="Menu" moveTo="menuView">
+                News
+            </h1>
+            <ul dojoType="dojox.mobile.RoundRectList" id="newsList"></ul>
+        </div>
+
+        <!-- weather view -->
+        <div id="weatherView" dojoType="dojox.mobile.ScrollableView">
+            <h1 dojoType="dojox.mobile.Heading" back="Menu" moveTo="menuView" fixed="top">
+                Weather
+            </h1>
+            <h2 dojoType="dojox.mobile.RoundRectCategory">
+                Current conditions
+            </h2>
+            <div dojoType="dojox.mobile.RoundRect" id="weatherCurrent">
+            </div>
+
+            <h2 dojoType="dojox.mobile.RoundRectCategory">
+                Forecast conditions
+            </h2>
+            <ul dojoType="dojox.mobile.RoundRectList" id="weatherForecast">
+            </ul>
+        </div>
+
+        <!-- about view -->
+        <div id="aboutView" dojoType="dojox.mobile.ScrollableView">
+            <h1 back="Menu" moveTo="menuView" dojoType="dojox.mobile.Heading" fixed="top">
+                About Catsei
+            </h1>
+            <div class="content">
+                <h3>Hope you liked it!</h3>
+                <p>
+                    Catsei is just a demo developed by
+                    <a href="http://mourino.net">Alvaro Mouri&ntilde;o</a> for the
+                    <a href="https://developer.mozilla.org/en-US/demos/devderby">Mozilla Dev Derby</a>.
+                    That means that it was made in a couple of weeks, so it may
+                    (and it does) contain some bugs and it could (and should)
+                    be improved in many ways.
+                </p>
+                <p>
+                    It works with geolocation to detect the city you are at a given
+                    moment, it then downloads information you may find useful and saves
+                    it to read it later, even when lacking an Internet connection.
+                </p>
+                <p>
+                    Catsei is a full client-side web application, no server required. It's also
+                    <a href="https://secure.wikimedia.org/wikipedia/en/wiki/Free_software">Free Software</a>
+                    so you can download, modify and distribute it's
+                    <a href="https://github.com/tooxie/heluecht">source code</a>.
+                </p>
+                <p>
+                    Powered by <a href="http://diveintohtml5.org/">HTML5</a>'s
+                    Geolocation API, application cache, local storage
+                    <a href="http://dojotoolkit.org/reference-guide/dojox/mobile.html">dojo</a>
+                    and <a href="http://www.css3.info/">CSS3</a>.
+                </p>
+                <p>
+                    Thanks to David Walsh for his great article
+                    <a href="http://davidwalsh.name/dojox-mobile">Creating Mobile Web Applications with dojox.mobile</a>
+                    and Heather Koyuk for
+                    <a href="http://heather.koyuk.net/refractions/?p=257">Loading Google Maps asynchronously via a Dojo Widget</a>.
+                    I have never worked with these technologies before, their posts were
+                    very useful.
+                </p>
+                <p>
+                    Follow me on
+                    <a href="https://twitter.com/#!/tuxie_">twitter</a> or
+                    <a href="https://identi.ca/tuxie">identi.ca</a>.
+                </p>
+            </div>
+            <div style="width:100%;height:88px;">
+            </div>
+        </div>
+
+        <!-- :wq -->
     </body>
 </html>
